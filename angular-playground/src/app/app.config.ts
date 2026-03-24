@@ -9,7 +9,7 @@ import {
   provideKeycloak,
 } from 'keycloak-angular';
 import { routes } from './app.routes';
-import { keycloakConfig } from './keycloak.config';
+import { keycloakConfig } from './core/auth/keycloak.config';
 
 const urlCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
   urlPattern: /^(http:\/\/localhost:3000)(\/.*)?$/i,
