@@ -1,6 +1,7 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, isDevMode, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideTransloco } from '@jsverse/transloco';
 import {
   createInterceptorCondition,
   INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
@@ -10,6 +11,7 @@ import {
 } from 'keycloak-angular';
 import { routes } from './app.routes';
 import { keycloakConfig } from './core/auth/keycloak.config';
+import { TranslocoHttpLoader } from './transloco-loader';
 
 const urlCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
   urlPattern: /^(http:\/\/localhost:3000)(\/.*)?$/i,
@@ -26,5 +28,16 @@ export const appConfig: ApplicationConfig = {
       useValue: [urlCondition], // <-- Note that multiple conditions might be added.
     },
     provideHttpClient(withInterceptors([includeBearerTokenInterceptor])),
+    provideHttpClient(),
+    provideTransloco({
+      config: {
+        availableLangs: ['en', 'es'],
+        defaultLang: 'en',
+        // Remove this option if your application doesn't support changing language in runtime.
+        reRenderOnLangChange: true,
+        prodMode: !isDevMode(),
+      },
+      loader: TranslocoHttpLoader,
+    }),
   ],
 };
